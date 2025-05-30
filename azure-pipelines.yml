@@ -1,0 +1,28 @@
+pool:
+  vmImage: 'windows-latest'
+
+stages:
+
+- stage: build
+  displayName: Build Java Project
+  jobs:
+  - job: build_job
+    displayName: Build with Maven
+    steps:
+    - task: JavaToolInstaller@0
+      inputs:
+        versionSpec: '17'
+        jdkArchitecture: 'x64'
+        jdkSourceOption: 'PreInstalled'
+
+    - task: Maven@3
+      inputs:
+        mavenPomFile: 'pom.xml'
+        goals: 'clean package'
+      displayName: 'Build with Maven'
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)/target'
+        artifact: 'JavaBuildArtifact'
+        publishLocation: 'pipeline'
